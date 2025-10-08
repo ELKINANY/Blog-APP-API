@@ -64,8 +64,8 @@ Short view:
 ├─ controllers/
 ├─ routes/
 ├─ middlewares/
-├─ prisma/
-└─ generated/
+├─ utils/
+└─ prisma/
 ```
 
 ## Getting Started
