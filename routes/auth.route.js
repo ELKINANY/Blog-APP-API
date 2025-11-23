@@ -6,6 +6,7 @@ const {
   verifyResetCode,
   resetPassword,
 } = require("../controllers/auth.controller");
+
 const {
   registerValidation,
   loginValidation,

@@ -14,7 +14,7 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth.route'));
 app.use('/api/categories', require('./routes/category.route'));
 app.use('/api/posts', require('./routes/posts.route'));
-// app.use('/api/comments', require('./routes/comment.route'));
+app.use('/api/comments', require('./routes/comments.route'));
 
 app.use((req, res, next) => {
   next(new apiError(`Can't find ${req.originalUrl} on this server!`, 404));

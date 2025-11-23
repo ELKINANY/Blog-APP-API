@@ -9,15 +9,16 @@ A simple Blog REST API built with Node.js and Prisma.
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
-	- [Prerequisites](#prerequisites)
-	- [Install](#install)
-	- [Environment variables](#environment-variables)
-	- [Database / Prisma](#database--prisma)
-	- [Run the server](#run-the-server)
+  - [Prerequisites](#prerequisites)
+  - [Install](#install)
+  - [Environment variables](#environment-variables)
+  - [Database / Prisma](#database--prisma)
+  - [Run the server](#run-the-server)
 - [API Endpoints](#api-endpoints)
-	- [Authentication](#authentication)
-	- [Posts](#posts)
-	- [Categories](#categories)
+  - [Authentication](#authentication)
+  - [Posts](#posts)
+  - [Categories](#categories)
+  - [Comments](#comments)
 - [Validation & Middlewares](#validation--middlewares)
 - [Error handling](#error-handling)
 - [Testing](#testing)
@@ -36,6 +37,7 @@ This repository contains a backend API for a blog application. The API provides 
 - Category management
 - Input validation
 - Centralized error handling
+- Comments on posts (create / read / delete)
 
 ## Tech Stack
 
@@ -165,6 +167,33 @@ curl -X POST http://localhost:3000/auth/login \
 
 - GET /categories - list categories
 - POST /categories - create a category (auth required)
+
+### Comments
+
+- GET /posts/:postId/comments - list comments for a post
+- POST /posts/:postId/comments - add a comment to a post (auth required)
+- DELETE /comments/:id - delete a comment (auth/ownership or admin required)
+
+Example request (add comment):
+
+```bash
+curl -X POST http://localhost:3000/posts/123/comments \
+	-H "Content-Type: application/json" \
+	-H "Authorization: Bearer <JWT>" \
+	-d '{"content":"Great post!","authorName":"Ali"}'
+```
+
+Example response (201 Created):
+
+```json
+{
+  "id": 456,
+  "postId": 123,
+  "content": "Great post!",
+  "authorName": "Ali",
+  "createdAt": "2025-11-23T12:34:56.000Z"
+}
+```
 
 ## Validation & Middlewares
 

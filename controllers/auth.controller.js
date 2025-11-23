@@ -64,7 +64,6 @@ const login = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: user, token });
 });
 
-
 /**
  * Forgot Password
  * @route POST /api/auth/forgot-password
