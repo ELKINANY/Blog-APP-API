@@ -2,7 +2,7 @@ const router = require("express").Router();
 const {
   createPost,
   getAllPosts,
-  getPostById,
+  getPostBySlug,
   updatePost,
   deletePost,
   likePost,
@@ -29,13 +29,13 @@ router
     createPostValidation,
     createPost
   )
-  .get(protect, getAllPosts);
+  .get(getAllPosts);
 
 router.patch("/:id/like", protect, likePost);
 
 router
-  .route("/:id")
-  .get(protect, getPostById)
+  .route("/:slug")
+  .get(protect, getPostBySlug)
   .put(
     protect,
     allowedTo("admin", "user"),

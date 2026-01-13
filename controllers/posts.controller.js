@@ -11,7 +11,7 @@ const {
 const fs = require("fs");
 
 const createPost = asyncHandler(async (req, res, next) => {
-  const { title, content, categories, excerpt, status } = req.body;
+  const { title, content, categories, excerpt } = req.body;
   let featured_image = null;
 
   if (categories && categories.length > 0) {
@@ -40,7 +40,6 @@ const createPost = asyncHandler(async (req, res, next) => {
       title,
       content,
       excerpt,
-      status: status || "draft",
       slug: generatedSlug,
       featured_image,
       author_id: req.user.id,
@@ -76,12 +75,12 @@ const getAllPosts = asyncHandler(async (req, res, next) => {
   res.status(200).json(posts);
 });
 
-const getPostById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+const getPostBySlug = asyncHandler(async (req, res, next) => {
+  const { slug } = req.params;
 
   // Increment views and fetch post
   const post = await prisma.posts.update({
-    where: { id },
+    where: { slug },
     data: {
       views: { increment: 1 },
     },
@@ -102,7 +101,7 @@ const getPostById = asyncHandler(async (req, res, next) => {
 
 const updatePost = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { title, content, categories, excerpt, status } = req.body;
+  const { title, content, categories, excerpt } = req.body;
 
   const post = await prisma.posts.findUnique({ where: { id } });
   if (!post) return next(new apiError("Post not found", 404));
@@ -127,7 +126,6 @@ const updatePost = asyncHandler(async (req, res, next) => {
       title,
       content,
       excerpt,
-      status,
       slug: title ? `${slugify(title)}-${Date.now()}` : undefined,
       featured_image,
       post_categories: categories
@@ -185,7 +183,7 @@ const deletePost = asyncHandler(async (req, res, next) => {
 module.exports = {
   createPost,
   getAllPosts,
-  getPostById,
+  getPostBySlug,
   updatePost,
   deletePost,
   likePost,

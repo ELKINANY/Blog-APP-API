@@ -27,7 +27,7 @@ const createCategory = asyncHandler(async (req, res, next) => {
     fs.unlinkSync(req.file.path);
   }
 
-  const generatedSlug = slug || slugify(name);
+  const generatedSlug = slugify(slug) || slugify(name);
 
   const newCategory = await prisma.categories.create({
     data: {
@@ -45,10 +45,10 @@ const getAllCategories = asyncHandler(async (req, res, next) => {
   res.status(200).json(categories);
 });
 
-const getCategoriesById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+const getCategoriesBySlug = asyncHandler(async (req, res, next) => {
+  const { slug } = req.params;
   const category = await prisma.categories.findUnique({
-    where: { id: id },
+    where: { slug: slug },
   });
   if (!category) {
     return next(new apiError("Category not found", 404));
@@ -111,7 +111,7 @@ const deleteCategory = asyncHandler(async (req, res, next) => {
 module.exports = {
   createCategory,
   getAllCategories,
-  getCategoriesById,
+  getCategoriesBySlug,
   updateCategory,
   deleteCategory,
 };

@@ -42,7 +42,6 @@ CREATE TABLE "posts" (
     "featured_image" VARCHAR(255),
     "views" INTEGER NOT NULL DEFAULT 0,
     "likes" INTEGER NOT NULL DEFAULT 0,
-    "status" VARCHAR(20) NOT NULL DEFAULT 'draft',
     "published" BOOLEAN DEFAULT false,
     "author_id" UUID,
     "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,

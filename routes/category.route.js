@@ -3,7 +3,7 @@ const router = require("express").Router();
 const {
   createCategory,
   getAllCategories,
-  getCategoriesById,
+  getCategoriesBySlug,
   updateCategory,
   deleteCategory,
 } = require("../controllers/category.controller");
@@ -26,7 +26,7 @@ router.post(
   createCategory
 );
 router.get("/", getAllCategories);
-router.get("/:id", checkIdValidator, getCategoriesById);
+router.get("/:id", checkIdValidator, getCategoriesBySlug);
 router.put(
   "/:id",
   protect,
