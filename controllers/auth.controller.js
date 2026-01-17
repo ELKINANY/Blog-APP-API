@@ -30,7 +30,7 @@ const register = asyncHandler(async (req, res, next) => {
     },
   });
   const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: process.env.JWT_EXPIRE,
   });
   await sendEmail({
     to: newUser.email,
@@ -51,16 +51,18 @@ const login = asyncHandler(async (req, res, next) => {
   const user = await prisma.users.findUnique({
     where: { email },
   });
-  if (!user) {
-    return next(new apiError("Invalid credentials", 401));
-  }
   const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
+  if (!user || !isPasswordValid) {
     return next(new apiError("Invalid credentials", 401));
   }
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRE,
+    }
+  );
+
   res.status(200).json({ data: user, token });
 });
 
@@ -98,7 +100,6 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Reset code sent to email" });
 });
 
-
 /**
  * Verify Reset Code
  * @route POST /api/auth/verify-reset-code
@@ -123,7 +124,7 @@ const verifyResetCode = asyncHandler(async (req, res, next) => {
   }
   await prisma.users.update({
     where: { email },
-    data: { passwordresetverified: true  },
+    data: { passwordresetverified: true },
   });
   res.status(200).json({ message: "Reset code verified" });
 });
@@ -156,10 +157,32 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Password has been reset" });
 });
 
+const getMe = asyncHandler(async (req, res) => {
+  const user = await prisma.users.findUnique({
+    where: { id: req.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      bio: true,
+      role: true,
+      created_at: true,
+    },
+  });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.json({ user });
+});
+
 module.exports = {
   register,
   login,
   forgotPassword,
   verifyResetCode,
   resetPassword,
+  getMe,
 };

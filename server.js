@@ -5,8 +5,19 @@ const PORT = process.env.PORT || 7000;
 const errorMiddleware = require("./middlewares/error.middleware");
 const cors = require("cors");
 const apiError = require("./utils/apiError");
+const rateLimit = require("express-rate-limit");
 
-app.use(cors());
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests from this IP, please try again later.",
+}));
+
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  optionsSuccessStatus: 200,
+  credentials: true,
+}));
 
 app.use(express.json());
 

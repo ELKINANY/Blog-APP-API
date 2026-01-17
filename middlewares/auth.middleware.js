@@ -5,7 +5,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const protect = asyncHandler(async (req, res, next) => {
-  try {
     let token;
     if (
       req.headers.authorization &&
@@ -15,7 +14,7 @@ const protect = asyncHandler(async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await prisma.users.findUnique({
-        where: { id: decoded.userId },
+        where: { id: decoded.id },
       });
       if (!user) {
         return next(new apiError("User not found", 404));
@@ -25,10 +24,7 @@ const protect = asyncHandler(async (req, res, next) => {
     } else {
       return next(new apiError("Not authorized", 401));
     }
-  } catch (error) {
-    return next(new apiError("Not authorized", 401));
-  }
-});
+  });
 
 const allowedTo = (...roles) => {
   return (req, res, next) => {
@@ -52,7 +48,6 @@ const ownership = (modelName) => {
     next();
   });
 };
-
 
 module.exports = {
   protect,
